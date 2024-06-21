@@ -17,7 +17,7 @@ To get started with the frontend project, follow these steps:
 1. **Clone the repository:**
 
     ```sh
-    git clone git@github.com:RegisRivijski/vue-quiz.git
+    git clone https://github.com/RegisRivijski/vue-quiz.git
     ```
 
 2. **Navigate to the project directory:**
