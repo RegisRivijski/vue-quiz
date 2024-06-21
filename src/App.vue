@@ -21,10 +21,13 @@
     <router-view/>
     <footer>
       <div class="footer-container">
-        <a href="https://t.me/artur_petrov_29" target="_blank">Telegram</a>
-        <a href="https://www.instagram.com/yonko_0415" target="_blank">Instagram</a>
-        <a href="https://www.linkedin.com/in/artur-petrov-a28818211" target="_blank">LinkedIn</a>
-        <a href="mailto:petrov0397@gmail.com">Email</a>
+        <p>{{ $t('appDescription') }}</p>
+        <div class="social-links">
+          <a href="https://t.me/artur_petrov_29" target="_blank">Telegram</a>
+          <a href="https://www.instagram.com/yonko_0415" target="_blank">Instagram</a>
+          <a href="https://www.linkedin.com/in/artur-petrov-a28818211" target="_blank">LinkedIn</a>
+          <a href="mailto:petrov0397@gmail.com">Email</a>
+        </div>
       </div>
     </footer>
   </div>
@@ -177,26 +180,37 @@ router-view {
 }
 
 footer {
-  background-color: #007bff;
-  padding: 10px 0;
+  padding: 20px 0;
   display: flex;
   justify-content: center;
-  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+  align-items: center;
+  flex-direction: column;
 }
 
 .footer-container {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+footer p {
+  margin: 10px 0;
+  color: #333;
+  text-align: center;
+}
+
+.social-links {
+  display: flex;
   gap: 20px;
 }
 
 footer a {
-  color: white;
+  color: #007bff;
   text-decoration: none;
   transition: color 0.3s;
 }
 
 footer a:hover {
-  color: #e0e0e0;
+  color: #0056b3;
 }
 </style>
