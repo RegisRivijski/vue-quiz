@@ -61,6 +61,9 @@ const messages = {
     enterNewPassword: 'Enter new password',
     updatePassword: 'Update password',
     appDescription: 'This application helps you learn and test your knowledge of IT vocabulary through quizzes and term definitions.',
+    lightTheme: 'Light theme',
+    darkTheme: 'Dark theme',
+    contactDeveloper: 'Developer contacts',
   },
   uk: {
     appName: 'Англійська ІТ Лексика',
@@ -122,6 +125,9 @@ const messages = {
     enterNewPassword: 'Введіть новий пароль',
     updatePassword: 'Оновити пароль',
     appDescription: 'Цей додаток допомагає вивчати та перевіряти знання ІТ лексики за допомогою тестів та визначень термінів.',
+    lightTheme: 'Світла тема',
+    darkTheme: 'Темна тема',
+    contactDeveloper: 'Контакти розробника',
   },
 };
 

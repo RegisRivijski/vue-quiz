@@ -1,5 +1,5 @@
 <template>
-  <div class="topics-container">
+  <div :class="['topics-container', currentTheme]">
     <h1>{{ $t('topics') }}</h1>
     <div class="dropdown">
       <div class="dropdown-selected" @click="toggleDropdown">
@@ -35,7 +35,8 @@ export default {
     };
   },
   computed: {
-    ...mapState(['topics', 'terms']),
+    ...mapState('theme', ['currentTheme']),
+    ...mapState('topics', ['topics', 'terms']),
     selectedTopicName() {
       const topic = this.topics.find(topic => topic.id === this.selectedTopic);
       return topic ? topic.name : '';
@@ -48,7 +49,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['fetchTopics', 'fetchTerms', 'setCurrentTopic']),
+    ...mapActions('topics', ['fetchTopics', 'fetchTerms', 'setCurrentTopic']),
     async selectTopic(topic) {
       this.selectedTopic = topic.id;
       this.dropdownOpen = false;
@@ -75,14 +76,15 @@ export default {
   flex-direction: column;
   align-items: center;
   padding: 10px;
-  background-color: #f9f9f9;
   min-height: 100vh;
   text-align: center;
   font-family: 'Montserrat', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
 
 h1, h2 {
-  color: #333;
+  color: var(--text-color);
   margin-bottom: 10px;
 }
 
@@ -95,19 +97,16 @@ h1, h2 {
 
 .dropdown-selected {
   padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
   font-size: 16px;
-  background-color: #fff;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: border-color 0.3s, box-shadow 0.3s;
+  background-color: var(--dropdown-bg-color);
   cursor: pointer;
+  transition: border-color 0.3s;
 }
 
-.dropdown-selected:focus,
 .dropdown-selected:hover {
-  border-color: #007bff;
-  box-shadow: 0 2px 7px rgba(0, 123, 255, 0.3);
+  border-color: var(--primary-color);
 }
 
 .dropdown-options {
@@ -116,10 +115,9 @@ h1, h2 {
   margin: 0;
   position: absolute;
   width: 100%;
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background: var(--dropdown-bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
   z-index: 1000;
   max-height: 150px;
   overflow-y: auto;
@@ -128,11 +126,10 @@ h1, h2 {
 .dropdown-options li {
   padding: 10px;
   cursor: pointer;
-  transition: background-color 0.3s;
 }
 
 .dropdown-options li:hover {
-  background-color: #f1f1f1;
+  background-color: var(--hover-bg-color);
 }
 
 .terms-list {
@@ -146,57 +143,46 @@ h1, h2 {
 .term-item {
   padding: 10px;
   margin-bottom: 5px;
-  background: white;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: var(--term-bg-color);
+  border-radius: 3px;
+  border: 1px solid var(--border-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: background-color 0.3s, transform 0.2s;
-}
-
-.term-item:hover {
-  background-color: #f1f1f1;
-  transform: scale(1.02);
 }
 
 .term {
   font-weight: bold;
-  color: #007bff;
+  color: var(--primary-color);
   flex: 1;
   text-align: center;
 }
 
 .definition {
-  color: #555;
+  color: var(--text-color);
   flex: 2;
   text-align: left;
 }
 
 .start-quiz-btn {
   padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
+  background-color: var(--primary-color);
+  color: var(--btn-text-color);
   border: none;
-  border-radius: 5px;
+  border-radius: 3px;
   cursor: pointer;
   font-size: 16px;
-  transition: background-color 0.3s, transform 0.2s;
+  transition: background-color 0.3s;
   margin-top: 10px;
   font-family: 'Montserrat', sans-serif;
 }
 
 .start-quiz-btn:hover {
-  background-color: #0056b3;
-  transform: scale(1.05);
-}
-
-.start-quiz-btn:active {
-  transform: scale(1);
+  background-color: var(--primary-hover-color);
 }
 
 .start-quiz-btn:disabled {
-  background-color: #ccc;
+  background-color: var(--disabled-bg-color);
   cursor: not-allowed;
 }
 </style>

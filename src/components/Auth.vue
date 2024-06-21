@@ -1,26 +1,29 @@
 <template>
-  <div class="auth-container">
+  <div :class="['auth-container', currentTheme]">
     <div class="tabs">
-      <button :class="{'active': activeTab === 'register'}" @click="activeTab = 'register'">{{ $t('register') }}</button>
-      <button :class="{'active': activeTab === 'login'}" @click="activeTab = 'login'">{{ $t('login') }}</button>
-    </div>
-
-    <div v-if="activeTab === 'register'" class="auth-box">
-      <h1>{{ $t('register') }}</h1>
-      <form @submit.prevent="register">
-        <input v-model="username" placeholder="Username" required />
-        <input v-model="password" type="password" placeholder="Password" required />
-        <input v-model="email" placeholder="Email" required />
-        <button type="submit" class="btn">{{ $t('register') }}</button>
-      </form>
+      <button :class="{ 'active': activeTab === 'login' }" @click="activeTab = 'login'">{{ $t('login') }}</button>
+      <button :class="{ 'active': activeTab === 'register' }" @click="activeTab = 'register'">{{
+          $t('register')
+        }}
+      </button>
     </div>
 
     <div v-if="activeTab === 'login'" class="auth-box">
       <h1>{{ $t('login') }}</h1>
-      <form @submit.prevent="login">
-        <input v-model="username" placeholder="Username" required />
-        <input v-model="password" type="password" placeholder="Password" required />
+      <form @submit.prevent="handleLogin">
+        <input v-model="username" :placeholder="$t('username')" required/>
+        <input v-model="password" type="password" :placeholder="$t('password')" required/>
         <button type="submit" class="btn">{{ $t('login') }}</button>
+      </form>
+    </div>
+
+    <div v-if="activeTab === 'register'" class="auth-box">
+      <h1>{{ $t('register') }}</h1>
+      <form @submit.prevent="handleRegister">
+        <input v-model="username" :placeholder="$t('username')" required/>
+        <input v-model="password" type="password" :placeholder="$t('password')" required/>
+        <input v-model="email" type="email" :placeholder="$t('email')" required/>
+        <button type="submit" class="btn">{{ $t('register') }}</button>
       </form>
     </div>
 
@@ -31,12 +34,13 @@
 </template>
 
 <script>
-import { useToast } from 'vue-toastification';
+import {mapActions, mapGetters, mapState} from 'vuex';
+import {useToast} from 'vue-toastification';
 
 export default {
   data() {
     return {
-      activeTab: 'register',
+      activeTab: 'login',
       username: '',
       password: '',
       email: '',
@@ -45,39 +49,45 @@ export default {
     };
   },
   computed: {
-    isAuthenticated() {
-      return this.$store.getters.isAuthenticated;
-    },
+    ...mapGetters('auth', ['isAuthenticated']),
+    ...mapState('theme', ['currentTheme']),
   },
   mounted() {
     this.toast = useToast();
+    if (this.isAuthenticated) {
+      this.$router.push('/topics');
+    }
   },
   methods: {
-    async register() {
+    ...mapActions('auth', ['register', 'login']),
+    async handleRegister() {
       try {
-        await this.$store.dispatch('register', {
+        await this.register({
           username: this.username,
           password: this.password,
           email: this.email,
         });
         this.setMessage(this.$t('registrationSuccess'), 'success');
+        this.$router.push('/topics');
       } catch (error) {
         this.setMessage(this.$t('registrationFailed'), 'error');
       }
     },
-    async login() {
+    async handleLogin() {
       try {
-        await this.$store.dispatch('login', {
+        await this.login({
           username: this.username,
           password: this.password,
         });
-        this.$router.push('/topics');
         this.setMessage(this.$t('loginSuccess'), 'success');
+        this.$router.push('/topics');
       } catch (error) {
         this.setMessage(this.$t('loginFailed'), 'error');
       }
     },
     setMessage(message, type) {
+      this.message = message;
+      this.messageType = type;
       this.toast[type](message);
     },
   },
@@ -92,13 +102,17 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+
 .auth-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  background-color: #f9f9f9;
   min-height: 100vh;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .tabs {
@@ -114,33 +128,37 @@ export default {
   background: none;
   cursor: pointer;
   font-size: 16px;
-  transition: border-bottom 0.3s;
+  transition: border-bottom 0.3s, color 0.3s;
 }
 
 .tabs button.active {
-  border-bottom: 2px solid #007bff;
-  color: #007bff;
+  border-bottom: 2px solid var(--primary-color);
+  color: var(--primary-color);
+}
+
+.tabs button:not(.active) {
+  color: var(--inactive-tab-color);
 }
 
 .tabs button:hover {
-  border-bottom: 2px solid #007bff;
+  border-bottom: 2px solid var(--primary-color);
 }
 
 .auth-box {
-  background: white;
+  background: var(--card-bg-color);
   padding: 20px;
   margin: 10px 0;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 h1 {
   font-size: 24px;
   margin-bottom: 20px;
   text-align: center;
-  color: #333;
+  color: var(--text-color);
 }
 
 form {
@@ -151,20 +169,23 @@ form {
 input {
   padding: 10px;
   margin-bottom: 15px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 16px;
+  transition: background-color 0.3s, color 0.3s;
+  background-color: var(--input-bg-color);
+  color: var(--input-text-color);
 }
 
 input:focus {
-  border-color: #007bff;
+  border-color: var(--primary-color);
   outline: none;
 }
 
 .btn {
   padding: 10px;
-  background-color: #007bff;
-  color: white;
+  background-color: var(--primary-color);
+  color: var(--btn-text-color);
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -173,7 +194,7 @@ input:focus {
 }
 
 .btn:hover {
-  background-color: #0056b3;
+  background-color: var(--primary-hover-color);
 }
 
 .message {
@@ -184,15 +205,5 @@ input:focus {
   max-width: 400px;
   text-align: center;
   font-size: 16px;
-}
-
-.success {
-  background-color: #d4edda;
-  color: #155724;
-}
-
-.error {
-  background-color: #f8d7da;
-  color: #721c24;
 }
 </style>

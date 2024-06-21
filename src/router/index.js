@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Auth from '../components/Auth.vue';
 import Topics from '../components/Topics.vue';
 import Quiz from '../components/Quiz.vue';
-import Profile from '../components/Profile.vue';
+import Profile from '../components/Profile/Profile.vue';
 import Settings from '../components/Settings.vue';
 
 const routes = [

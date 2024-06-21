@@ -1,77 +1,89 @@
 <template>
-  <div class="settings-container">
-    <h1>{{ $t('settings') }}</h1>
-    <div class="settings-cards">
-      <div class="card settings-card">
-        <h2>{{ $t('updateEmail') }}</h2>
-        <form @submit.prevent="validateEmail">
-          <div class="form-group">
-            <label for="newEmail">{{ $t('newEmail') }}</label>
-            <input
-                type="email"
-                v-model="newEmail"
-                id="newEmail"
-                required
-                :class="{'is-invalid': emailError}"
-                :placeholder="$t('enterNewEmail')"
-            />
-            <small v-if="emailError" class="error-message">{{ emailError }}</small>
-          </div>
-          <button type="submit" class="update-btn">{{ $t('updateEmail') }}</button>
-        </form>
-      </div>
+  <div :class="['settings-container', currentTheme]">
+    <div class="tabs">
+      <button :class="{ 'active': activeTab === 'email' }" @click="activeTab = 'email'">{{ $t('updateEmail') }}</button>
+      <button :class="{ 'active': activeTab === 'password' }" @click="activeTab = 'password'">{{ $t('updatePassword') }}</button>
+    </div>
 
-      <div class="card settings-card">
-        <h2>{{ $t('updatePassword') }}</h2>
-        <form @submit.prevent="validatePassword">
-          <div class="form-group">
-            <label for="currentPassword">{{ $t('currentPassword') }}</label>
-            <input
-                type="password"
-                v-model="currentPassword"
-                id="currentPassword"
-                required
-                :placeholder="$t('enterCurrentPassword')"
-            />
-          </div>
-          <div class="form-group">
-            <label for="newPassword">{{ $t('newPassword') }}</label>
-            <input
-                type="password"
-                v-model="newPassword"
-                id="newPassword"
-                required
-                :class="{'is-invalid': passwordError}"
-                :placeholder="$t('enterNewPassword')"
-            />
-            <small v-if="passwordError" class="error-message">{{ passwordError }}</small>
-          </div>
-          <button type="submit" class="update-btn">{{ $t('updatePassword') }}</button>
-        </form>
-      </div>
+    <div v-if="activeTab === 'email'" class="settings-box">
+      <h1>{{ $t('updateEmail') }}</h1>
+      <form @submit.prevent="validateEmail">
+        <div class="form-group">
+          <label for="newEmail">{{ $t('newEmail') }}</label>
+          <input
+              type="email"
+              v-model="newEmail"
+              id="newEmail"
+              required
+              :class="{'is-invalid': emailError}"
+              :placeholder="$t('enterNewEmail')"
+          />
+          <small v-if="emailError" class="error-message">{{ emailError }}</small>
+        </div>
+        <button type="submit" class="btn">{{ $t('updateEmail') }}</button>
+      </form>
+    </div>
+
+    <div v-if="activeTab === 'password'" class="settings-box">
+      <h1>{{ $t('updatePassword') }}</h1>
+      <form @submit.prevent="validatePassword">
+        <div class="form-group">
+          <label for="currentPassword">{{ $t('currentPassword') }}</label>
+          <input
+              type="password"
+              v-model="currentPassword"
+              id="currentPassword"
+              required
+              :placeholder="$t('enterCurrentPassword')"
+          />
+        </div>
+        <div class="form-group">
+          <label for="newPassword">{{ $t('newPassword') }}</label>
+          <input
+              type="password"
+              v-model="newPassword"
+              id="newPassword"
+              required
+              :class="{'is-invalid': passwordError}"
+              :placeholder="$t('enterNewPassword')"
+          />
+          <small v-if="passwordError" class="error-message">{{ passwordError }}</small>
+        </div>
+        <button type="submit" class="btn">{{ $t('updatePassword') }}</button>
+      </form>
+    </div>
+
+    <div v-if="message" :class="['message', messageType]">
+      {{ message }}
     </div>
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 import { useToast } from 'vue-toastification';
 
 export default {
   data() {
     return {
+      activeTab: 'email',
       newEmail: '',
       currentPassword: '',
       newPassword: '',
       emailError: '',
       passwordError: '',
+      message: '',
+      messageType: '',
     };
+  },
+  computed: {
+    ...mapState('theme', ['currentTheme']),
   },
   mounted() {
     this.toast = useToast();
   },
   methods: {
-    ...mapActions(['updateEmail', 'updatePassword']),
+    ...mapActions('auth', ['updateEmail', 'updatePassword']),
     validateEmail() {
       this.emailError = '';
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -94,18 +106,21 @@ export default {
     async updateEmailAction() {
       try {
         await this.updateEmail({ email: this.newEmail });
-        this.toast.success(this.$t('emailUpdated'));
+        this.setMessage(this.$t('emailUpdated'), 'success');
       } catch (error) {
-        this.toast.error(this.$t('errorUpdatingEmail'));
+        this.setMessage(this.$t('errorUpdatingEmail'), 'error');
       }
     },
     async updatePasswordAction() {
       try {
         await this.updatePassword({ currentPassword: this.currentPassword, newPassword: this.newPassword });
-        this.toast.success(this.$t('passwordUpdated'));
+        this.setMessage(this.$t('passwordUpdated'), 'success');
       } catch (error) {
-        this.toast.error(this.$t('errorUpdatingPassword'));
+        this.setMessage(this.$t('errorUpdatingPassword'), 'error');
       }
+    },
+    setMessage(message, type) {
+      this.toast[type](message);
     }
   }
 };
@@ -119,36 +134,63 @@ export default {
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  background-color: #f9f9f9;
   min-height: 100vh;
   text-align: center;
   font-family: 'Montserrat', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
 }
 
-h1, h2 {
-  color: #333;
-  margin-bottom: 20px;
-}
-
-.settings-cards {
+.tabs {
   display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
   justify-content: center;
-}
-
-.card {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
-  width: 100%;
-  max-width: 500px;
 }
 
-.settings-card {
-  flex: 1 1 calc(50% - 40px); /* 50% width minus gap */
+.tabs button {
+  padding: 10px 20px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  cursor: pointer;
+  font-size: 16px;
+  transition: border-bottom 0.3s, color 0.3s;
+}
+
+.tabs button.active {
+  border-bottom: 2px solid var(--primary-color);
+  color: var(--primary-color);
+}
+
+.tabs button:not(.active) {
+  color: var(--inactive-tab-color);
+}
+
+.tabs button:hover {
+  border-bottom: 2px solid var(--primary-color);
+}
+
+.settings-box {
+  background: var(--card-bg-color);
+  padding: 20px;
+  margin: 10px 0;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 400px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  text-align: center;
+  color: var(--text-color);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
 }
 
 .form-group {
@@ -163,12 +205,15 @@ h1, h2 {
 }
 
 .form-group input {
-  width: 100%;
+  width: calc(100% - 20px);
   padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  margin: 0 auto 15px auto;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
   font-size: 16px;
-  transition: border-color 0.3s, box-shadow 0.3s;
+  transition: border-color 0.3s, box-shadow 0.3s, background-color 0.3s, color 0.3s;
+  background-color: var(--input-bg-color);
+  color: var(--input-text-color);
 }
 
 .form-group input.is-invalid {
@@ -182,23 +227,28 @@ h1, h2 {
   margin-top: 5px;
 }
 
-.update-btn {
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
+.btn {
+  padding: 10px;
+  background-color: var(--primary-color);
+  color: var(--btn-text-color);
   border: none;
-  border-radius: 5px;
+  border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
-  transition: background-color 0.3s, transform 0.2s;
+  transition: background-color 0.3s;
 }
 
-.update-btn:hover {
-  background-color: #0056b3;
-  transform: scale(1.05);
+.btn:hover {
+  background-color: var(--primary-hover-color);
 }
 
-.update-btn:active {
-  transform: scale(1);
+.message {
+  margin-top: 20px;
+  padding: 10px;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  font-size: 16px;
 }
 </style>

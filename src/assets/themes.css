@@ -1,0 +1,80 @@
+:root {
+    --bg-color: #f9f9f9;
+    --text-color: #333;
+    --primary-color: #007bff;
+    --primary-hover-color: #0056b3;
+    --btn-text-color: white;
+    --dropdown-bg-color: #fff;
+    --hover-bg-color: #f1f1f1;
+    --term-bg-color: #fff;
+    --border-color: #ccc;
+    --disabled-bg-color: #ccc;
+    --inactive-tab-color: #888;
+    --input-bg-color: #f9f9f9;
+    --input-text-color: #333;
+    --dropdown-hover-bg: #f1f1f1;
+    --dropdown-bg: #fff;
+    --total-quizzes-bg: #007bff;
+    --total-correct-bg: #28a745;
+    --total-incorrect-bg: #dc3545;
+    --excellent-bg: #28a745;
+    --great-bg: #007bff;
+    --good-bg: #ffc107;
+    --not-bad-bg: #ff851b;
+    --keep-trying-bg: #ff5722;
+    --better-luck-bg: #dc3545;
+}
+
+.dark-theme {
+    --bg-color: #121212;
+    --text-color: #fff;
+    --primary-color: #bb86fc;
+    --primary-hover-color: #3700b3;
+    --btn-text-color: white;
+    --dropdown-bg-color: #1f1f1f;
+    --hover-bg-color: #2c2c2c;
+    --term-bg-color: #1f1f1f;
+    --border-color: #444;
+    --disabled-bg-color: #444;
+    --inactive-tab-color: #666;
+    --input-bg-color: #2c2c2c;
+    --input-text-color: #ccc;
+    --dropdown-hover-bg: #2c2c2c;
+    --dropdown-bg: #1f1f1f;
+    --total-quizzes-bg: #007bff;
+    --total-correct-bg: #28a745;
+    --total-incorrect-bg: #dc3545;
+    --excellent-bg: #28a745;
+    --great-bg: #007bff;
+    --good-bg: #ffc107;
+    --not-bad-bg: #ff851b;
+    --keep-trying-bg: #ff5722;
+    --better-luck-bg: #dc3545;
+}
+
+.light-theme {
+    --bg-color: #f9f9f9;
+    --text-color: #333;
+    --primary-color: #007bff;
+    --primary-hover-color: #0056b3;
+    --btn-text-color: white;
+    --dropdown-bg-color: #fff;
+    --hover-bg-color: #f1f1f1;
+    --term-bg-color: #fff;
+    --border-color: #ccc;
+    --disabled-bg-color: #ccc;
+    --inactive-tab-color: #888;
+    --input-bg-color: #f9f9f9;
+    --input-text-color: #333;
+    --dropdown-hover-bg: #f1f1f1;
+    --dropdown-bg: #fff;
+    --total-quizzes-bg: #007bff;
+    --total-correct-bg: #28a745;
+    --total-incorrect-bg: #dc3545;
+    --excellent-bg: #28a745;
+    --great-bg: #007bff;
+    --good-bg: #ffc107;
+    --not-bad-bg: #ff851b;
+    --keep-trying-bg: #ff5722;
+    --better-luck-bg: #dc3545;
+}

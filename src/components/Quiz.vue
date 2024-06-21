@@ -1,5 +1,5 @@
 <template>
-  <div class="quiz-container">
+  <div :class="['quiz-container', currentTheme]">
     <h1>{{ $t('forTopic') }} "{{ currentTopic.name }}"</h1>
     <div v-if="currentTerm" class="term-container">
       <p class="term">{{ currentTerm.term }}</p>
@@ -50,7 +50,11 @@ export default {
     };
   },
   computed: {
-    ...mapState(['terms', 'currentTopic']),
+    ...mapState({
+      terms: state => state.topics.terms,
+      currentTopic: state => state.topics.currentTopic,
+      currentTheme: state => state.theme.currentTheme,
+    }),
     correctAnswers() {
       return this.results.filter(result => result.is_correct).length;
     },
@@ -74,7 +78,7 @@ export default {
     this.initializeQuiz();
   },
   methods: {
-    ...mapActions(['setCurrentTopic', 'fetchTerms', 'submitQuizResult']),
+    ...mapActions('topics', ['setCurrentTopic', 'fetchTerms', 'submitQuizResult']),
     async initializeQuiz() {
       const topicId = this.$route.params.topicId;
       await this.setCurrentTopic(topicId);
@@ -148,31 +152,33 @@ export default {
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  background-color: #f9f9f9;
   min-height: 100vh;
   text-align: center;
   font-family: 'Montserrat', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
 }
 
 h1 {
   font-size: 2em;
-  color: #333;
   margin-bottom: 20px;
+  color: var(--text-color);
 }
 
 .term-container {
-  background: white;
+  background: var(--card-bg-color);
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  max-width: 800px;
   width: 100%;
+  max-width: 800px;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .term {
   font-size: 1.5em;
-  color: #007bff;
   margin-bottom: 20px;
+  color: var(--primary-color);
 }
 
 .options-container {
@@ -183,7 +189,7 @@ h1 {
 
 .option-btn {
   padding: 12px;
-  background-color: #007bff;
+  background-color: var(--primary-color);
   color: white;
   border: none;
   border-radius: 10px;
@@ -194,7 +200,7 @@ h1 {
 }
 
 .option-btn:hover {
-  background-color: #0056b3;
+  background-color: var(--primary-hover-color);
   transform: scale(1.05);
 }
 
@@ -204,8 +210,8 @@ h1 {
 
 .timer {
   font-size: 1.2em;
-  color: #333;
   margin-top: 20px;
+  color: var(--text-color);
 }
 
 .progress-bar-container {
@@ -218,12 +224,12 @@ h1 {
 
 .progress-bar {
   height: 20px;
-  background-color: #007bff;
+  background-color: var(--primary-color);
   transition: width 0.3s ease;
 }
 
 p {
-  color: #555;
+  color: var(--text-color);
 }
 
 .results-list {
@@ -238,8 +244,8 @@ p {
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 5px;
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: var(--card-bg-color);
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .results-list li.correct {
@@ -262,35 +268,13 @@ p {
 
 .summary {
   font-size: 1.2em;
-  color: #333;
   margin-top: 20px;
+  color: var(--text-color);
 }
 
 .score {
   font-size: 1.2em;
-  color: #333;
   margin-bottom: 20px;
-}
-
-.back-btn {
-  align-self: flex-start;
-  padding: 10px 20px;
-  background-color: #6c757d;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  margin-bottom: 20px;
-  font-family: 'Montserrat', sans-serif;
-}
-
-.back-btn:hover {
-  background-color: #5a6268;
-  transform: scale(1.05);
-}
-
-.back-btn:active {
-  transform: scale(1);
+  color: var(--text-color);
 }
 </style>
