@@ -17,13 +17,13 @@ To get started with the frontend project, follow these steps:
 1. **Clone the repository:**
 
     ```sh
-    git clone <repository-url>
+    git clone git@github.com:RegisRivijski/vue-quiz.git
     ```
 
 2. **Navigate to the project directory:**
 
     ```sh
-    cd frontend
+    cd vue-quiz
     ```
 
 3. **Install dependencies:**
