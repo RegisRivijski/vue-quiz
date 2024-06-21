@@ -3,7 +3,7 @@
     <header>
       <div class="header-content">
         <div class="logo-container">
-          <img src="img.png" alt="Logo" class="logo">
+          <img src="logo.png" alt="Logo" class="logo">
           <h1>{{ $t('appName') }}</h1>
         </div>
         <nav>
