@@ -299,14 +299,20 @@ footer a:hover {
 
   nav {
     flex-direction: column;
+    width: 100%;
   }
 
   nav a {
     margin: 5px 0;
+    flex: 1;
+    text-align: center;
+    width: calc(100% - 20px); /* Almost full width */
   }
 
   .logout-btn {
     margin: 5px 0;
+    width: calc(100% - 20px); /* Almost full width */
+    text-align: center;
   }
 
   .footer-content {
