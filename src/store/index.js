@@ -47,7 +47,7 @@ export default createStore({
   actions: {
     async login({commit}, authData) {
       try {
-        const response = await axios.post('/api/login', authData);
+        const response = await axios.post('/quiz/api/login', authData);
         commit('setUser', response.data.user);
         commit('setToken', response.data.token);
         axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
@@ -58,7 +58,7 @@ export default createStore({
     },
     async register({commit}, authData) {
       try {
-        const response = await axios.post('/api/register', authData);
+        const response = await axios.post('/quiz/api/register', authData);
         commit('setUser', response.data.user);
         commit('setToken', response.data.token);
       } catch (error) {
@@ -68,7 +68,7 @@ export default createStore({
     },
     async fetchTopics({commit}) {
       try {
-        const response = await axios.get('/api/topics');
+        const response = await axios.get('/quiz/api/topics');
         commit('setTopics', response.data);
       } catch (error) {
         console.error('Error fetching topics:', error);
@@ -76,7 +76,7 @@ export default createStore({
     },
     async fetchTerms({commit, state}, topicId) {
       try {
-        const response = await axios.get(`/api/terms/${topicId}`, {
+        const response = await axios.get(`/quiz/api/terms/${topicId}`, {
           headers: {
             'authorization': `Bearer ${state.token}`,
           },
@@ -91,7 +91,7 @@ export default createStore({
     async fetchUserResults({commit, state}) {
       if (!state.user.id) return;
       try {
-        const response = await axios.get(`/api/user-results/${state.user.id}`, {
+        const response = await axios.get(`/quiz/api/user-results/${state.user.id}`, {
           headers: {
             'Authorization': `Bearer ${state.token}`,
           },
@@ -116,7 +116,7 @@ export default createStore({
     },
     async submitQuizResult({state}, quizResult) {
       try {
-        await axios.post('/api/add-quiz-result', quizResult, {
+        await axios.post('/quiz/api/add-quiz-result', quizResult, {
           headers: {
             'authorization': `Bearer ${state.token}`,
           }
@@ -127,7 +127,7 @@ export default createStore({
     },
     async fetchResultsByTopic({commit, state}, {userId, topicId}) {
       try {
-        const response = await axios.get(`/api/user-results-by-topic/${userId}/${topicId}`, {
+        const response = await axios.get(`/quiz/api/user-results-by-topic/${userId}/${topicId}`, {
           headers: {
             'authorization': `Bearer ${state.token}`,
           },
@@ -139,7 +139,7 @@ export default createStore({
     },
     async updateEmail({state, commit}, {email}) {
       try {
-        await axios.put('/api/update-email', {email}, {
+        await axios.put('/quiz/api/update-email', {email}, {
           headers: {
             'Authorization': `Bearer ${state.token}`,
           }
@@ -153,7 +153,7 @@ export default createStore({
     },
     async updatePassword({state}, {currentPassword, newPassword}) {
       try {
-        await axios.put('/api/update-password', {currentPassword, newPassword}, {
+        await axios.put('/quiz/api/update-password', {currentPassword, newPassword}, {
           headers: {
             'Authorization': `Bearer ${state.token}`,
           }
