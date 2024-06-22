@@ -51,6 +51,7 @@ export default {
   },
   computed: {
     ...mapState({
+      user: state => state.auth.user,
       terms: state => state.topics.terms,
       currentTopic: state => state.topics.currentTopic,
       currentTheme: state => state.theme.currentTheme,
@@ -117,7 +118,6 @@ export default {
       return options.sort(() => Math.random() - 0.5);
     },
     async checkAnswer(selectedOptionId) {
-      const user = JSON.parse(localStorage.getItem('user'));
       const isCorrect = selectedOptionId === this.currentTerm.id;
       const result = {
         term: this.currentTerm,
@@ -126,9 +126,9 @@ export default {
       };
       this.results.push(result);
       await this.submitQuizResult({
-        quizResults: {
+        quizResult: {
           termId: this.currentTerm.id,
-          userId: user.id,
+          userId: this.user.id,
           isCorrect: isCorrect,
           userAnswer: selectedOptionId
         },
