@@ -15,12 +15,12 @@ const mutations = {
 };
 
 const actions = {
-  async fetchUserResults({ commit, state }, userId) {
+  async fetchUserResults({ commit }, { userId, token }) {
     if (!userId) return;
     try {
       const response = await axios.get(`/quiz/api/user-results/${userId}`, {
         headers: {
-          'Authorization': `Bearer ${state.token}`,
+          'Authorization': `Bearer ${token}`,
         },
       });
       commit('setUserResults', response.data);
@@ -28,11 +28,11 @@ const actions = {
       console.error('Error fetching user results:', error);
     }
   },
-  async fetchResultsByTopic({ commit, state }, { userId, topicId }) {
+  async fetchResultsByTopic({ commit }, { userId, topicId, token }) {
     try {
       const response = await axios.get(`/quiz/api/user-results-by-topic/${userId}/${topicId}`, {
         headers: {
-          'authorization': `Bearer ${state.token}`,
+          'authorization': `Bearer ${token}`,
         },
       });
       commit('setTopicResults', response.data);
@@ -40,11 +40,14 @@ const actions = {
       console.error('Error fetching results by topic:', error);
     }
   },
-  async submitQuizResult({ state }, quizResult) {
+  async submitQuizResult(_, {
+    quizResult,
+    token,
+  }) {
     try {
       await axios.post('/quiz/api/add-quiz-result', quizResult, {
         headers: {
-          'authorization': `Bearer ${state.token}`,
+          'authorization': `Bearer ${token}`,
         },
       });
     } catch (error) {

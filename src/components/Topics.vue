@@ -35,6 +35,7 @@ export default {
     };
   },
   computed: {
+    ...mapState('auth', ['token']),
     ...mapState('theme', ['currentTheme']),
     ...mapState('topics', ['topics', 'terms']),
     selectedTopicName() {
@@ -54,7 +55,10 @@ export default {
       this.selectedTopic = topic.id;
       this.dropdownOpen = false;
       await this.setCurrentTopic(topic.id);
-      await this.fetchTerms(topic.id);
+      await this.fetchTerms({
+        topicId: topic.id,
+        token: this.token,
+      });
     },
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;

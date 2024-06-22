@@ -78,6 +78,7 @@ export default {
   },
   computed: {
     ...mapState('theme', ['currentTheme']),
+    ...mapState('auth', ['token']),
   },
   mounted() {
     this.toast = useToast();
@@ -105,7 +106,10 @@ export default {
     },
     async updateEmailAction() {
       try {
-        await this.updateEmail({ email: this.newEmail });
+        await this.updateEmail({
+          email: this.newEmail,
+          token: this.token,
+        });
         this.setMessage(this.$t('emailUpdated'), 'success');
       } catch (error) {
         this.setMessage(this.$t('errorUpdatingEmail'), 'error');
@@ -113,7 +117,11 @@ export default {
     },
     async updatePasswordAction() {
       try {
-        await this.updatePassword({ currentPassword: this.currentPassword, newPassword: this.newPassword });
+        await this.updatePassword({
+          currentPassword: this.currentPassword,
+          newPassword: this.newPassword,
+          token: this.token,
+        });
         this.setMessage(this.$t('passwordUpdated'), 'success');
       } catch (error) {
         this.setMessage(this.$t('errorUpdatingPassword'), 'error');

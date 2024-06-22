@@ -54,6 +54,7 @@ export default {
       terms: state => state.topics.terms,
       currentTopic: state => state.topics.currentTopic,
       currentTheme: state => state.theme.currentTheme,
+      token: state => state.auth.token,
     }),
     correctAnswers() {
       return this.results.filter(result => result.is_correct).length;
@@ -79,11 +80,15 @@ export default {
   },
   methods: {
     ...mapActions('topics', ['setCurrentTopic', 'fetchTerms', 'submitQuizResult']),
+    ...mapActions('userResults', ['submitQuizResult']),
     async initializeQuiz() {
       const topicId = this.$route.params.topicId;
       await this.setCurrentTopic(topicId);
       if (this.terms.length === 0) {
-        await this.fetchTerms(topicId);
+        await this.fetchTerms({
+          topicId,
+          token: this.token,
+        });
       }
       this.terms = this.terms.sort(() => Math.random() - 0.5); // Shuffle terms
       this.nextTerm();
@@ -121,10 +126,13 @@ export default {
       };
       this.results.push(result);
       await this.submitQuizResult({
-        termId: this.currentTerm.id,
-        userId: user.id,
-        isCorrect: isCorrect,
-        userAnswer: selectedOptionId
+        quizResults: {
+          termId: this.currentTerm.id,
+          userId: user.id,
+          isCorrect: isCorrect,
+          userAnswer: selectedOptionId
+        },
+        token: this.token,
       });
       this.nextTerm();
     },

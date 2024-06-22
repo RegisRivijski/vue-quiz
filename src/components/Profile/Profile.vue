@@ -20,7 +20,7 @@ export default {
     TopicResults
   },
   computed: {
-    ...mapState('auth', ['user']),
+    ...mapState('auth', ['user', 'token']),
     ...mapState('theme', ['currentTheme']),
     ...mapState('userResults', ['userResults']),
     ...mapState('topics', ['topics']),
@@ -31,7 +31,10 @@ export default {
   },
   mounted() {
     if (this.user.id) {
-      this.fetchUserResults(this.user.id);
+      this.fetchUserResults({
+        userId: this.user.id,
+        token: this.token,
+      });
       this.fetchTopics();
     }
   },

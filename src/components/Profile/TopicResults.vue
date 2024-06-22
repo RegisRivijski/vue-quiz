@@ -65,6 +65,7 @@ export default {
   computed: {
     ...mapState('userResults', ['topicResults']),
     ...mapState('theme', ['currentTheme']),
+    ...mapState('auth', ['token']),
     selectedTopicName() {
       const topic = this.topics.find(t => t.id === this.selectedTopicId);
       return topic ? topic.name : '';
@@ -93,7 +94,11 @@ export default {
     async selectTopic(topic) {
       this.selectedTopicId = topic.id;
       this.dropdownOpen = false;
-      await this.fetchResultsByTopic({ userId: this.user.id, topicId: this.selectedTopicId });
+      await this.fetchResultsByTopic({
+        userId: this.user.id,
+        topicId: this.selectedTopicId,
+        token: this.token,
+      });
     },
     toggleHistory(termId) {
       this.showHistory[termId] = !this.showHistory[termId];

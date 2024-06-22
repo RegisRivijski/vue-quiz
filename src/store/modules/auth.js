@@ -46,11 +46,11 @@ const actions = {
     commit('clearAuthData');
     delete axios.defaults.headers.common['Authorization'];
   },
-  async updateEmail({ state, commit }, { email }) {
+  async updateEmail({ state, commit }, { email, token }) {
     try {
       await axios.put('/quiz/api/update-email', { email }, {
         headers: {
-          'Authorization': `Bearer ${state.token}`,
+          'Authorization': `Bearer ${token}`,
         }
       });
       const updatedUser = { ...state.user, email };
@@ -60,11 +60,11 @@ const actions = {
       throw error;
     }
   },
-  async updatePassword({ state }, { currentPassword, newPassword }) {
+  async updatePassword(_, { currentPassword, newPassword, token }) {
     try {
       await axios.put('/quiz/api/update-password', { currentPassword, newPassword }, {
         headers: {
-          'Authorization': `Bearer ${state.token}`,
+          'Authorization': `Bearer ${token}`,
         }
       });
     } catch (error) {

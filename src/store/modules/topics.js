@@ -27,11 +27,11 @@ const actions = {
       console.error('Error fetching topics:', error);
     }
   },
-  async fetchTerms({ commit, state }, topicId) {
+  async fetchTerms({ commit }, { topicId, token }) {
     try {
       const response = await axios.get(`/quiz/api/terms/${topicId}`, {
         headers: {
-          'authorization': `Bearer ${state.token}`,
+          'authorization': `Bearer ${token}`,
         },
       });
       if (response.data) {
