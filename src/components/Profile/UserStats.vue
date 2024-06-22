@@ -28,10 +28,10 @@ export default {
   computed: {
     ...mapState('theme', ['currentTheme']),
     totalCorrect() {
-      return this.userResults.filter(result => result.is_correct).length;
+      return this.userResults.filter(result => result.isCorrect).length;
     },
     totalIncorrect() {
-      return this.userResults.filter(result => !result.is_correct).length;
+      return this.userResults.filter(result => !result.isCorrect).length;
     },
     accuracy() {
       const total = this.userResults.length;
