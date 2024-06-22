@@ -32,6 +32,7 @@
           <div class="theme-switcher">
             <button @click="switchTheme('light')" :class="{'active': currentTheme === 'light-theme'}">{{ $t('lightTheme') }}</button>
             <button @click="switchTheme('dark')" :class="{'active': currentTheme === 'dark-theme'}">{{ $t('darkTheme') }}</button>
+            <button @click="switchTheme('neutral')" :class="{'active': currentTheme === 'neutral-theme'}">{{ $t('neutralTheme') }}</button>
           </div>
         </div>
         <p>{{ $t('appDescription') }}</p>

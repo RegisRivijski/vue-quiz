@@ -111,3 +111,41 @@
     --secondary-hover-color: #5a6268;
     --stat-bg-color: #e0e0e0;
 }
+
+.neutral-theme {
+    --bg-color: #f2e8d5;
+    --text-color: #4e342e;
+    --primary-color: #8d6e63;
+    --primary-hover-color: #6d4c41;
+    --btn-text-color: white;
+    --dropdown-bg-color: #d7ccc8;
+    --hover-bg-color: #bcaaa4;
+    --term-bg-color: #d7ccc8;
+    --border-color: #a1887f;
+    --disabled-bg-color: #a1887f;
+    --inactive-tab-color: #8d6e63;
+    --input-bg-color: #d7ccc8;
+    --input-text-color: #4e342e;
+    --dropdown-hover-bg: #bcaaa4;
+    --dropdown-bg: #d7ccc8;
+    --total-quizzes-bg: #8d6e63;
+    --total-correct-bg: #81c784;
+    --total-incorrect-bg: #e57373;
+    --excellent-bg: #81c784;
+    --great-bg: #8d6e63;
+    --good-bg: #ffb74d;
+    --not-bad-bg: #ff7043;
+    --keep-trying-bg: #ff7043;
+    --better-luck-bg: #e57373;
+    --header-bg-color: #6d4c41;
+    --header-text-color: #fff;
+    --card-bg-color: #d7ccc8;
+    --card-text-color: #4e342e;
+    --footer-bg-color: #f2e8d5;
+    --footer-text-color: #4e342e;
+    --link-color: #8d6e63;
+    --link-hover-color: #6d4c41;
+    --secondary-color: #a1887f;
+    --secondary-hover-color: #8d6e63;
+    --stat-bg-color: #bcaaa4;
+}
