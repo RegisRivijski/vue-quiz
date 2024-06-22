@@ -2,7 +2,7 @@ import { createI18n } from 'vue-i18n';
 
 const messages = {
   en: {
-    appName: 'English IT Vocabulary',
+    appName: 'LexiLearn',
     profile: 'Profile',
     topics: 'Topics',
     totalQuizzes: 'Total Quizzes Taken',
@@ -66,7 +66,7 @@ const messages = {
     contactDeveloper: 'Developer contacts',
   },
   uk: {
-    appName: 'Англійська ІТ Лексика',
+    appName: 'LexiLearn',
     profile: 'Профіль',
     topics: 'Теми',
     totalQuizzes: 'Всього пройдено тестів',
