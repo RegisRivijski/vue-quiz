@@ -22,11 +22,18 @@
         <p class="score">{{ correctAnswers }} {{ $t('outOf') }} {{ totalQuestions }} {{ $t('correct') }}</p>
         <ul class="results-list">
           <li v-for="result in results" :key="result.term.id" :class="{'correct': result.is_correct, 'incorrect': !result.is_correct}">
-            {{ result.term.term }} -
+            <span class="term">{{ result.term.term }}</span> -
             <span :class="{'correct-text': result.is_correct, 'incorrect-text': !result.is_correct}">
               {{ result.is_correct ? $t('correct') : $t('wrong') }}
             </span>
-            ({{ $t('yourAnswer') }}: {{ result.userAnswer ? result.userAnswer.definition : $t('noAnswer') }}, {{ $t('correctAnswer') }}: {{ result.term.definition }})
+            <div class="answers">
+              <div class="user-answer">
+                <strong>{{ $t('yourAnswer') }}:</strong> {{ result.userAnswer ? result.userAnswer.definition : $t('noAnswer') }}
+              </div>
+              <div class="correct-answer">
+                <strong>{{ $t('correctAnswer') }}:</strong> {{ result.term.definition }}
+              </div>
+            </div>
           </li>
         </ul>
       </div>
@@ -84,7 +91,10 @@ export default {
     ...mapActions('userResults', ['submitQuizResult']),
     async initializeQuiz() {
       const topicId = this.$route.params.topicId;
-      await this.setCurrentTopic(topicId);
+      await this.setCurrentTopic({
+        topicId: topicId,
+        token: this.token,
+      });
       if (this.terms.length === 0) {
         await this.fetchTerms({
           topicId,
@@ -264,13 +274,32 @@ p {
   border-left: 5px solid #dc3545;
 }
 
+.term {
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
 .correct-text {
   color: #28a745;
   font-weight: bold;
+  margin-left: 5px;
 }
 
 .incorrect-text {
   color: #dc3545;
+  font-weight: bold;
+  margin-left: 5px;
+}
+
+.answers {
+  margin-top: 10px;
+}
+
+.user-answer, .correct-answer {
+  margin-top: 5px;
+}
+
+.user-answer strong, .correct-answer strong {
   font-weight: bold;
 }
 

@@ -1,8 +1,9 @@
 <template>
   <div :class="['profile-container', currentTheme]">
-    <h1>{{ $t('profile') }}</h1>
-    <UserInfo :user="user" />
-    <UserStats :userResults="userResults" />
+    <div class="profile-content">
+      <UserInfo :user="user" />
+      <UserStats :userResults="userResults" />
+    </div>
     <TopicResults :topics="topics" :user="user" />
   </div>
 </template>
@@ -17,7 +18,7 @@ export default {
   components: {
     UserInfo,
     UserStats,
-    TopicResults
+    TopicResults,
   },
   computed: {
     ...mapState('auth', ['user', 'token']),
@@ -30,13 +31,13 @@ export default {
     ...mapActions('topics', ['fetchTopics']),
   },
   mounted() {
-    if (this.user.id) {
+    if (this.user?.id) {
       this.fetchUserResults({
         userId: this.user.id,
         token: this.token,
       });
-      this.fetchTopics();
     }
+    this.fetchTopics();
   },
 };
 </script>
@@ -45,19 +46,28 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
 
 .profile-container {
+  padding: 20px;
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  color: var(--text-color);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
-  background-color: var(--bg-color);
-  min-height: 100vh;
-  text-align: center;
   font-family: 'Montserrat', sans-serif;
-  transition: background-color 0.3s, color 0.3s;
 }
 
-h1 {
-  color: var(--text-color);
+.profile-content {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  max-width: 1200px;
   margin-bottom: 20px;
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .profile-content {
+    flex-direction: column;
+  }
 }
 </style>

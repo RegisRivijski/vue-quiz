@@ -1,143 +1,122 @@
 <template>
-  <div class="card topics-results">
+  <div :class="['topic-results-container', currentTheme]">
     <h2>{{ $t('quizResults') }}</h2>
-    <div v-if="topics.length">
-      <div class="topic-select">
-        <label for="topicSelect" class="select-topic-label">{{ $t('selectTopic') }}</label>
-        <div class="dropdown">
-          <div class="dropdown-selected" @click="toggleDropdown">
-            {{ selectedTopicName || $t('selectTopic') }}
-          </div>
-          <ul v-if="dropdownOpen" class="dropdown-options">
-            <li v-for="topic in topics" :key="topic.id" @click="selectTopic(topic)">
-              {{ topic.name }}
-            </li>
-          </ul>
+    <div v-if="userResults.length">
+      <div class="dropdown">
+        <div class="dropdown-selected" @click="toggleDropdown">
+          {{ selectedTopicName || $t('selectTopic') }}
         </div>
-      </div>
-
-      <div v-if="filteredResults.length" class="topic-results">
-        <h3>{{ selectedTopicName }}</h3>
-        <ul>
-          <li v-for="result in filteredResults" :key="result.termId">
-            <div class="term-summary" @click="toggleHistory(result.termId)">
-              <strong>{{ result.term }}</strong>
-              <span>{{ result.correctTotal }} / {{ result.total }}</span>
-            </div>
-            <ul v-if="showHistory[result.termId]" class="history-list">
-              <li v-for="history in result.history" :key="history.id">
-                {{ history.userAnswer === 'No answer' ? $t('noAnswer') : history.userAnswer }} -
-                <span :class="{'correct': history.isCorrect, 'incorrect': !history.isCorrect}">
-                  {{ history.isCorrect ? $t('correct') : $t('wrong') }}
-                </span>
-              </li>
-            </ul>
+        <ul v-if="dropdownOpen" class="dropdown-options">
+          <li v-for="topic in topics" :key="topic.id" @click="selectTopic(topic)">
+            {{ topic.name }}
           </li>
         </ul>
       </div>
-      <p v-else>{{ $t('noResults') }}</p>
+      <div class="overall-stats">
+        <h3>{{ $t('overallStats') }}</h3>
+        <ul>
+          <li v-for="termStat in termStats" :key="termStat.term">
+            {{ termStat.term }}: {{ termStat.correctAttempts }} / {{ termStat.totalAttempts }} ({{ (termStat.correctAttempts / termStat.totalAttempts * 100).toFixed(2) }}%)
+          </li>
+        </ul>
+      </div>
     </div>
-    <p v-else>{{ $t('loading') }}</p>
+    <p v-else>{{ $t('noResults') }}</p>
   </div>
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapState } from 'vuex';
 
 export default {
-  props: {
-    topics: {
-      type: Array,
-      required: true,
-    },
-    user: {
-      type: Object,
-      required: true,
-    },
-  },
   data() {
     return {
-      selectedTopicId: null,
+      selectedTopic: '',
+      filteredResults: [],
       dropdownOpen: false,
-      showHistory: {},
     };
   },
   computed: {
-    ...mapState('userResults', ['topicResults']),
     ...mapState('theme', ['currentTheme']),
-    ...mapState('auth', ['token']),
+    ...mapState('userResults', ['userResults']),
+    ...mapState('topics', ['topics']),
     selectedTopicName() {
-      const topic = this.topics.find(t => t.id === this.selectedTopicId);
+      const topic = this.topics.find(topic => topic.id === this.selectedTopic);
       return topic ? topic.name : '';
     },
-    filteredResults() {
-      const results = this.topicResults.filter(result => result.topicId === this.selectedTopicId);
-      const terms = [...new Set(results.map(result => result.termId))];
-      return terms.map((termId) => {
-        const termResults = results.filter(result => result.termId === termId);
-        const correctTotal = termResults.filter(result => result.isCorrect).length;
-        return {
-          termId,
-          term: termResults[0].term,
-          correctTotal,
-          total: termResults.length,
-          history: termResults,
-        };
+    termStats() {
+      const stats = {};
+      this.filteredResults.forEach(result => {
+        if (!stats[result.term]) {
+          stats[result.term] = { term: result.term, totalAttempts: 0, correctAttempts: 0 };
+        }
+        stats[result.term].totalAttempts++;
+        if (result.isCorrect) {
+          stats[result.term].correctAttempts++;
+        }
       });
+      return Object.values(stats);
     },
   },
   methods: {
-    ...mapActions('userResults', ['fetchResultsByTopic']),
+    filterResults() {
+      this.filteredResults = this.userResults.filter(result => result.topicId === this.selectedTopic);
+    },
+    selectTopic(topic) {
+      this.selectedTopic = topic.id;
+      this.dropdownOpen = false;
+      this.filterResults();
+    },
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
     },
-    async selectTopic(topic) {
-      this.selectedTopicId = topic.id;
-      this.dropdownOpen = false;
-      await this.fetchResultsByTopic({
-        userId: this.user.id,
-        topicId: this.selectedTopicId,
-        token: this.token,
-      });
-    },
-    toggleHistory(termId) {
-      this.showHistory[termId] = !this.showHistory[termId];
-    },
+  },
+  watch: {
+    userResults: 'filterResults',
+    selectedTopic: 'filterResults',
+  },
+  mounted() {
+    if (this.topics.length > 0) {
+      this.selectedTopic = this.topics[0].id;
+    }
+    this.filterResults();
   },
 };
 </script>
 
 <style scoped>
-.card {
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+
+.topic-results-container {
   background: var(--card-bg-color);
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, color 0.3s;
   width: 100%;
   max-width: 800px;
-  transition: background-color 0.3s, color 0.3s;
+  margin: 0 auto;
 }
 
-.topic-select {
+h2 {
   margin-bottom: 20px;
-  text-align: center;
+  color: var(--text-color);
 }
 
 .dropdown {
   position: relative;
   width: 100%;
-  max-width: 500px;
-  margin: 0 auto;
+  margin-bottom: 20px;
 }
 
 .dropdown-selected {
   padding: 10px;
   border: 1px solid var(--border-color);
   border-radius: 5px;
-  font-size: 16px;
-  background-color: var(--dropdown-bg);
+  background-color: var(--input-bg-color);
+  color: var(--input-text-color);
   cursor: pointer;
+  transition: border-color 0.3s;
 }
 
 .dropdown-selected:hover {
@@ -161,66 +140,31 @@ export default {
 .dropdown-options li {
   padding: 10px;
   cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .dropdown-options li:hover {
   background-color: var(--dropdown-hover-bg);
 }
 
-.select-topic-label {
-  font-weight: bold;
-  font-size: 18px;
-  display: block;
-  margin-bottom: 5px;
+.overall-stats {
+  margin-top: 20px;
+  padding: 10px;
+  border-radius: 5px;
+  background: var(--card-bg-color);
+  transition: background-color 0.3s, color 0.3s;
 }
 
-.topic-results ul {
+.overall-stats h3 {
+  margin-bottom: 10px;
+}
+
+.overall-stats ul {
   list-style-type: none;
   padding: 0;
-  margin: 0;
 }
 
-.topic-results li {
-  padding: 10px;
-  margin-bottom: 10px;
-  background: var(--card-bg-color);
-  border-radius: 10px;
-}
-
-.topic-results li .term-summary {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-}
-
-.topic-results li .term-summary strong {
-  font-size: 1.1em;
-  color: var(--primary-color);
-}
-
-.history-list {
-  margin-top: 10px;
-  padding-left: 20px;
-}
-
-.correct {
-  color: #28a745;
-  font-weight: bold;
-}
-
-.incorrect {
-  color: #dc3545;
-  font-weight: bold;
-}
-
-h2 {
-  color: var(--text-color);
-  margin-bottom: 20px;
-}
-
-h3 {
-  color: var(--text-color);
-  margin-bottom: 10px;
+.overall-stats li {
+  padding: 5px 0;
 }
 </style>

@@ -41,13 +41,13 @@ const actions = {
       console.error('Error fetching terms:', error);
     }
   },
-  setCurrentTopic({ commit, state }, topicId) {
-    const topic = state.topics.find(topic => topic.id === topicId);
-    if (topic) {
-      commit('setCurrentTopic', topic);
-      if (topic.terms) {
-        commit('setTerms', topic.terms);
-      }
+  async setCurrentTopic({ commit, dispatch }, { topicId, token }) {
+    try {
+      const response = await axios.get(`/quiz/api/topic/${topicId}`);
+      commit('setCurrentTopic', response.data);
+      await dispatch('fetchTerms', { topicId, token });
+    } catch (error) {
+      console.error('Error setting current topic:', error);
     }
   },
 };

@@ -2,17 +2,14 @@
   <div :class="['auth-container', currentTheme]">
     <div class="tabs">
       <button :class="{ 'active': activeTab === 'login' }" @click="activeTab = 'login'">{{ $t('login') }}</button>
-      <button :class="{ 'active': activeTab === 'register' }" @click="activeTab = 'register'">{{
-          $t('register')
-        }}
-      </button>
+      <button :class="{ 'active': activeTab === 'register' }" @click="activeTab = 'register'">{{ $t('register') }}</button>
     </div>
 
     <div v-if="activeTab === 'login'" class="auth-box">
       <h1>{{ $t('login') }}</h1>
       <form @submit.prevent="handleLogin">
-        <input v-model="username" :placeholder="$t('username')" required/>
-        <input v-model="password" type="password" :placeholder="$t('password')" required/>
+        <input v-model="username" :placeholder="$t('username')" required />
+        <input v-model="password" type="password" :placeholder="$t('password')" required />
         <button type="submit" class="btn">{{ $t('login') }}</button>
       </form>
     </div>
@@ -20,9 +17,9 @@
     <div v-if="activeTab === 'register'" class="auth-box">
       <h1>{{ $t('register') }}</h1>
       <form @submit.prevent="handleRegister">
-        <input v-model="username" :placeholder="$t('username')" required/>
-        <input v-model="password" type="password" :placeholder="$t('password')" required/>
-        <input v-model="email" type="email" :placeholder="$t('email')" required/>
+        <input v-model="username" :placeholder="$t('username')" required />
+        <input v-model="password" type="password" :placeholder="$t('password')" required />
+        <input v-model="email" type="email" :placeholder="$t('email')" required />
         <button type="submit" class="btn">{{ $t('register') }}</button>
       </form>
     </div>
@@ -34,10 +31,11 @@
 </template>
 
 <script>
-import {mapActions, mapGetters, mapState} from 'vuex';
-import {useToast} from 'vue-toastification';
+import { mapActions, mapGetters, mapState } from 'vuex';
+import { useToast } from 'vue-toastification';
 
 export default {
+  props: ['defaultTab'],
   data() {
     return {
       activeTab: 'login',
@@ -54,6 +52,9 @@ export default {
   },
   mounted() {
     this.toast = useToast();
+    if (this.defaultTab) {
+      this.activeTab = this.defaultTab;
+    }
     if (this.isAuthenticated) {
       this.$router.push('/topics');
     }

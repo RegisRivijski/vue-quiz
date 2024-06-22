@@ -2,10 +2,10 @@
   <div id="app" :class="currentTheme">
     <header>
       <div class="header-content">
-        <div class="logo-container">
-          <img src="logo.png" alt="Logo" class="logo">
+        <router-link to="/" class="logo-container">
+          <img src="/quiz/logo.png" alt="Logo" class="logo">
           <h1>{{ $t('appName') }}</h1>
-        </div>
+        </router-link>
         <nav>
           <router-link v-if="isAuthenticated" to="/topics" active-class="active-link">{{ $t('topics') }}</router-link>
           <router-link v-if="isAuthenticated" to="/profile" active-class="active-link">{{ $t('profile') }}</router-link>
@@ -45,23 +45,23 @@ import { mapState, mapMutations } from "vuex";
 
 export default {
   data() {
-    return {
-      isAuthenticated: !!localStorage.getItem('token'),
-    };
+    return {};
   },
   computed: {
+    ...mapState('auth', ['token']),
     ...mapState('theme', ['currentTheme']),
+    isAuthenticated() {
+      return !!this.token;
+    },
   },
   watch: {
-    $route() {
-      this.isAuthenticated = !!localStorage.getItem('token');
-    },
     currentTheme(newTheme) {
       document.body.className = newTheme;
     },
   },
   methods: {
     ...mapMutations('theme', ['setTheme']),
+    ...mapMutations('auth', ['clearAuthData']),
     switchLocale(locale) {
       this.$i18n.locale = locale;
     },
@@ -69,9 +69,7 @@ export default {
       this.setTheme(theme + '-theme');
     },
     logout() {
-      localStorage.removeItem('user');
-      localStorage.removeItem('token');
-      this.isAuthenticated = false;
+      this.clearAuthData();
       this.$router.push('/');
     },
   },
@@ -91,32 +89,6 @@ export default {
   flex-direction: column;
 }
 
-body.light-theme {
-  --bg-color: #f9f9f9;
-  --text-color: #333;
-  --header-bg-color: #007bff;
-  --header-text-color: #fff;
-  --card-bg-color: #fff;
-  --card-text-color: #333;
-  --footer-bg-color: #f9f9f9;
-  --footer-text-color: #333;
-  --link-color: #007bff;
-  --link-hover-color: #0056b3;
-}
-
-body.dark-theme {
-  --bg-color: #121212;
-  --text-color: #fff;
-  --header-bg-color: #1f1f1f;
-  --header-text-color: #fff;
-  --card-bg-color: #1f1f1f;
-  --card-text-color: #fff;
-  --footer-bg-color: #1f1f1f;
-  --footer-text-color: #fff;
-  --link-color: #bb86fc;
-  --link-hover-color: #3700b3;
-}
-
 body {
   background-color: var(--bg-color);
   color: var(--text-color);
@@ -124,11 +96,11 @@ body {
 }
 
 header {
-  background-color: var(--header-bg-color);
-  padding: 10px 20px;
+  padding: 20px 40px;
   display: flex;
   justify-content: center;
   align-items: center;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .header-content {
@@ -142,18 +114,19 @@ header {
 .logo-container {
   display: flex;
   align-items: center;
+  text-decoration: none;
 }
 
 .logo {
-  width: 40px;
-  height: 40px;
-  margin-right: 10px;
+  width: 50px;
+  height: 50px;
+  margin-right: 15px;
 }
 
 header h1 {
-  color: var(--header-text-color);
+  color: var(--text-color);
   margin: 0;
-  font-size: 1.5em;
+  font-size: 1.8em;
 }
 
 nav {
@@ -162,32 +135,34 @@ nav {
 }
 
 nav a {
-  color: var(--header-text-color);
-  padding: 10px 15px;
+  color: var(--text-color);
+  padding: 10px 20px;
   text-decoration: none;
   transition: background-color 0.3s, color 0.3s;
   border-radius: 5px;
   margin: 0 10px;
+  font-size: 1.1em;
 }
 
 nav a:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: var(--secondary-hover-color);
 }
 
 nav a.active-link {
-  background-color: rgba(255, 255, 255, 0.2);
-  color: var(--header-text-color);
+  background-color: var(--secondary-color);
+  color: var(--btn-text-color);
 }
 
 .logout-btn {
-  padding: 10px 15px;
+  padding: 10px 20px;
   border: none;
-  color: var(--header-text-color);
+  color: var(--text-color);
   border-radius: 5px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 1.1em;
   transition: background-color 0.3s, transform 0.2s;
   background-color: var(--link-color);
+  margin-left: 10px;
 }
 
 .logout-btn:hover {
@@ -201,17 +176,18 @@ nav a.active-link {
 
 router-view {
   flex: 1;
-  padding: 20px;
+  padding: 40px;
 }
 
 footer {
-  padding: 20px 0;
+  padding: 40px 20px;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   background-color: var(--footer-bg-color);
   color: var(--footer-text-color);
+  box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .footer-container {
@@ -226,12 +202,13 @@ footer {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  padding: 10px 20px;
+  padding: 20px 40px;
 }
 
 footer p {
-  margin: 10px 0;
+  margin: 20px 0;
   text-align: center;
+  font-size: 1.2em;
 }
 
 .social-links {
@@ -242,12 +219,15 @@ footer p {
 
 .social-links h3 {
   margin-bottom: 10px;
+  font-size: 1.4em;
 }
 
 footer a {
   color: var(--link-color);
   text-decoration: none;
   transition: color 0.3s;
+  margin-bottom: 5px;
+  font-size: 1.1em;
 }
 
 footer a:hover {
@@ -257,19 +237,19 @@ footer a:hover {
 .locale-switcher,
 .theme-switcher {
   display: flex;
-  gap: 10px;
+  gap: 20px;
   align-items: center;
 }
 
 .locale-switcher button,
 .theme-switcher button {
-  padding: 10px 15px;
+  padding: 10px 20px;
   border: none;
   background-color: transparent;
   color: var(--link-color);
   border-radius: 5px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 1.1em;
   transition: background-color 0.3s, color 0.3s, transform 0.2s;
 }
 
@@ -289,7 +269,7 @@ footer a:hover {
 @media (max-width: 768px) {
   header {
     flex-direction: column;
-    padding: 10px;
+    padding: 20px;
   }
 
   .header-content {
